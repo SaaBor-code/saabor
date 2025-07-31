@@ -249,13 +249,14 @@
         }
         
         .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            justify-content: space-between;
             gap: 30px;
             margin-bottom: 40px;
         }
         
         .contact-item {
+            flex: 1;
             background-color: var(--light);
             border-radius: 8px;
             padding: 25px;
