@@ -132,10 +132,26 @@ async function loadArticle() {
         articleSubtitle.textContent = currentArticle.subtitle || '';
         articleSubtitle.style.display = currentArticle.subtitle ? 'block' : 'none';
         
+        // 获取作者信息
+        let authorData = {
+            username: '未知用户',
+            avatar: 'https://avatars.githubusercontent.com/u/211512911?v=4',
+            is_admin: false
+        };
+        
+        try {
+            const authorResponse = await fetch(`${API_BASE}/api/users/${currentArticle.author_uid}`);
+            if (authorResponse.ok) {
+                authorData = await authorResponse.json();
+            }
+        } catch (authorError) {
+            console.error('获取作者信息失败:', authorError);
+        }
+        
         // 设置作者信息
-        authorAvatar.src = currentArticle.author.avatar || 'https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/img/avatar.png';
-        authorName.textContent = currentArticle.author.username;
-        adminBadge.style.display = currentArticle.author.is_admin ? 'inline' : 'none';
+        authorAvatar.src = authorData.avatar || 'https://avatars.githubusercontent.com/u/211512911?v=4';
+        authorName.textContent = authorData.username;
+        adminBadge.style.display = authorData.is_admin ? 'inline' : 'none';
         
         // 格式化日期
         const date = new Date(currentArticle.created_at);
