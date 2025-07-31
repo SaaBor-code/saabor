@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 联系我们</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="contact.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html">分类</a>
+                    <a href="archive.html">归档</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <img src="" alt="头像" class="user-avatar" id="userAvatar">
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-item" id="profileLink">
+                                <i class="fas fa-user"></i>
+                                个人资料
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                退出登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h1>联系我们</h1>
+                <p>有任何问题或建议？我们很乐意听取您的意见</p>
+            </div>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>电子邮件</h3>
+                    <p>saabor@eoolife.com</p>
+                    <a href="mailto:saabor@eoolife.com">发送邮件</a>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>地址</h3>
+                    <p>中国 · 北京</p>
+                    <a href="#">查看地图</a>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>工作时间</h3>
+                    <p>周一至周五 9:00-18:00</p>
+                    <p>周末及节假日休息</p>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <h2 style="margin-bottom: 20px; color: var(--text-color);">发送消息</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" placeholder="您的姓名" required>
+                        <div class="error-message" id="nameError">请输入您的姓名</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" placeholder="您的邮箱" required>
+                        <div class="error-message" id="emailError">请输入有效的邮箱地址</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">主题</label>
+                        <input type="text" id="subject" placeholder="消息主题" required>
+                        <div class="error-message" id="subjectError">请输入消息主题</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">消息内容</label>
+                        <textarea id="message" placeholder="请告诉我们您的想法..." required></textarea>
+                        <div class="error-message" id="messageError">请输入消息内容</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">发送消息</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="contact.js"></script>
+</body>
+</html>

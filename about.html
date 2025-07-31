@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 关于</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="article.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html">分类</a>
+                    <a href="archive.html">归档</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <img src="" alt="头像" class="user-avatar" id="userAvatar">
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-item" id="profileLink">
+                                <i class="fas fa-user"></i>
+                                个人资料
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                退出登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="about-container">
+            <div class="about-header">
+                <h1>关于 saabor博客</h1>
+                <p>一个专注于技术分享和个人成长的博客平台</p>
+            </div>
+            
+            <div class="about-content">
+                <h2>我们的使命</h2>
+                <p>saabor博客致力于为技术爱好者提供一个分享知识、交流想法和记录成长的平台。我们相信，通过分享，每个人都能成为更好的自己。</p>
+                
+                <h2>我们的愿景</h2>
+                <p>构建一个充满活力的技术社区，让知识自由流动，让创新不断涌现。我们希望saabor博客能成为连接技术人、激发创造力的桥梁。</p>
+                
+                <h2>技术特点</h2>
+                <ul>
+                    <li><strong>Markdown支持</strong>：使用Markdown语法编写文章，让内容创作更加便捷</li>
+                    <li><strong>明暗模式</strong>：支持明暗模式切换，适应不同使用场景</li>
+                    <li><strong>用户系统</strong>：完善的用户注册、登录和权限管理系统</li>
+                    <li><strong>IP限制</strong>：每个IP地址只能注册一个账号，防止恶意注册和滥用</li>
+                    <li><strong>安全存储</strong>：用户密码使用特殊处理但是你还是设置强密码防止被破解</li>
+                </ul>
+                
+                <h2>发展历程</h2>
+                <p>saabor博客始于2025年，由一群热爱技术的开发者共同创建。从最初的一个简单想法，到如今的功能完善的博客平台，我们始终坚持"技术为本，用户至上"的原则。</p>
+                
+                <blockquote>
+                    "分享知识，就是放大自己的价值。"
+                </blockquote>
+                
+                <h2>联系我们</h2>
+                <p>如果您有任何问题、建议或合作意向，欢迎通过<a href="contact.html">联系我们</a>页面与我们取得联系。我们期待听到您的声音！</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="about.js"></script>
+</body>
+</html>

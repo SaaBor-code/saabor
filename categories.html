@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 分类</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="categories.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html" class="active">分类</a>
+                    <a href="archive.html">归档</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <img src="" alt="头像" class="user-avatar" id="userAvatar">
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-item" id="profileLink">
+                                <i class="fas fa-user"></i>
+                                个人资料
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                退出登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="categories-container">
+            <div class="categories-header">
+                <h1>文章分类</h1>
+                <p>浏览不同主题的文章，找到您感兴趣的内容</p>
+            </div>
+            
+            <div class="category-list">
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="category-name">编程开发</h3>
+                    <div class="category-count">12篇文章</div>
+                </div>
+                
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 class="category-name">科技创新</h3>
+                    <div class="category-count">8篇文章</div>
+                </div>
+                
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="category-name">数据分析</h3>
+                    <div class="category-count">6篇文章</div>
+                </div>
+                
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="category-name">人工智能</h3>
+                    <div class="category-count">15篇文章</div>
+                </div>
+                
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="category-name">移动开发</h3>
+                    <div class="category-count">9篇文章</div>
+                </div>
+                
+                <div class="category-item">
+                    <div class="category-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3 class="category-name">云计算</h3>
+                    <div class="category-count">7篇文章</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="categories.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 归档</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="archive.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html">分类</a>
+                    <a href="archive.html" class="active">归档</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <img src="" alt="头像" class="user-avatar" id="userAvatar">
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-item" id="profileLink">
+                                <i class="fas fa-user"></i>
+                                个人资料
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                退出登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="archive-container">
+            <div class="archive-header">
+                <h1>文章归档</h1>
+                <p>按时间顺序浏览所有文章</p>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>加载文章归档中...</p>
+            </div>
+            
+            <div id="archiveContent" style="display: none;">
+                <!-- 文章归档将通过JavaScript动态加载 -->
+            </div>
+            
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <h3>加载失败</h3>
+                <p id="errorText">无法加载文章归档，请稍后再试。</p>
+                <button class="btn btn-primary" id="retryBtn" style="margin-top: 20px;">重试</button>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="archive.js"></script>
+</body>
+</html>

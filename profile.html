@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 用户主页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html">分类</a>
+                    <a href="archive.html">归档</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <img src="" alt="头像" class="user-avatar" id="userAvatar">
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-item" id="profileLink">
+                                <i class="fas fa-user"></i>
+                                个人资料
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                退出登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="loading" id="sidebarLoading">
+                    <div class="spinner"></div>
+                    <p>加载用户信息中...</p>
+                </div>
+                
+                <div id="profileSidebarContent" style="display: none;">
+                    <div class="profile-header">
+                        <img src="" alt="头像" class="profile-avatar" id="sidebarAvatar">
+                        <h1 class="profile-username" id="sidebarUsername">用户名</h1>
+                        <div id="sidebarAdminBadge" class="admin-badge" style="display: none;">管理员</div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="articleCount">0</div>
+                            <div class="stat-label">文章</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="followerCount">0</div>
+                            <div class="stat-label">粉丝</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions" id="profileActions">
+                        <!-- 操作按钮将根据用户权限动态添加 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-main">
+                <div class="loading" id="mainLoading">
+                    <div class="spinner"></div>
+                    <p>加载用户信息中...</p>
+                </div>
+                
+                <div id="profileMainContent" style="display: none;">
+                    <div class="profile-section">
+                        <h2 class="section-title"><i class="fas fa-user"></i> 个人简介</h2>
+                        <div class="bio-content" id="bioContent">
+                            <!-- 个人简介将通过JavaScript动态加载 -->
+                        </div>
+                        <div id="bioEditor" style="display: none;">
+                            <div class="markdown-toolbar" style="margin-bottom: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button type="button" class="toolbar-btn" data-format="bold">
+                                    <i class="fas fa-bold"></i> 加粗
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="italic">
+                                    <i class="fas fa-italic"></i> 斜体
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="heading">
+                                    <i class="fas fa-heading"></i> 标题
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="link">
+                                    <i class="fas fa-link"></i> 链接
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="image">
+                                    <i class="fas fa-image"></i> 图片
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="list">
+                                    <i class="fas fa-list-ul"></i> 无序列表
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="code">
+                                    <i class="fas fa-code"></i> 代码
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="blockquote">
+                                    <i class="fas fa-quote-right"></i> 引用
+                                </button>
+                            </div>
+                            <textarea id="bioTextarea" style="width: 100%; min-height: 200px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px; background-color: var(--bg-color); color: var(--text-color);"></textarea>
+                            <button class="btn btn-primary" id="saveBioBtn" style="width: 100%;">
+                                <i class="fas fa-save"></i> 保存简介
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h2 class="section-title"><i class="fas fa-info-circle"></i> 详细信息</h2>
+                        <div class="user-info">
+                            <div class="info-item">
+                                <div class="info-label">注册时间</div>
+                                <div class="info-value" id="registeredAt">2023年1月1日</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">用户ID</div>
+                                <div class="info-value" id="userId">1</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h2 class="section-title"><i class="fas fa-file-alt"></i> 最新文章</h2>
+                        <div class="user-articles" id="userArticles">
+                            <!-- 用户文章将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="error-message" id="errorMessage" style="display: none;">
+                    <h3>加载失败</h3>
+                    <p id="errorText">无法加载用户信息，请稍后再试。</p>
+                    <button class="btn btn-primary" id="retryBtn" style="margin-top: 20px;">重试</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 注册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html">分类</a>
+                    <a href="archive.html">归档</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="register-container">
+            <div class="register-header">
+                <h1>创建新账户</h1>
+            </div>
+            <div class="register-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" placeholder="选择一个用户名" required>
+                        <div class="error-message" id="usernameError">用户名不能为空</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" placeholder="至少8个字符" required>
+                        <div class="password-strength">
+                            <span id="passwordStrengthText">太弱</span>
+                        </div>
+                        <div class="password-strength-bar">
+                            <div class="password-strength-fill" id="passwordStrengthFill" style="width: 0%; background-color: #dc3545;"></div>
+                        </div>
+                        <div class="error-message" id="passwordError">密码至少需要8个字符</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="avatar">头像URL (可选)</label>
+                        <input type="url" id="avatar" placeholder="https://example.com/avatar.jpg">
+                        <div class="error-message" id="avatarError">请输入有效的URL</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">注册</button>
+                </form>
+                
+                <div class="login-link">
+                    已有账户? <a href="login.html">立即登录</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="register.js"></script>
+</body>
+</html>
