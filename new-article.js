@@ -193,7 +193,8 @@
                         title: title.value.trim(),
                         subtitle: subtitle.value.trim(),
                         content: content.value,
-                        markdown: useMarkdown.checked
+                        // 强制使用Markdown格式
+                        markdown: true
                     })
                 });
                 

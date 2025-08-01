@@ -18,6 +18,39 @@ const themeToggle = document.getElementById('themeToggle');
 // 存储当前用户信息
 let currentUser = null;
 
+// 创建缓存对象
+const cache = {
+    articles: new Map(),
+    users: new Map(),
+    // 缓存有效期5分钟
+    ttl: 5 * 60 * 1000,
+    
+    set(key, data, map) {
+        map.set(key, {
+            data: data,
+            timestamp: Date.now()
+        });
+    },
+    
+    get(key, map) {
+        const cached = map.get(key);
+        if (!cached) return null;
+        
+        // 检查是否过期
+        if (Date.now() - cached.timestamp > this.ttl) {
+            map.delete(key);
+            return null;
+        }
+        
+        return cached.data;
+    },
+    
+    clear() {
+        this.articles.clear();
+        this.users.clear();
+    }
+};
+
 // 检查主题模式
 function checkTheme() {
     const savedTheme = localStorage.getItem('blog-theme');
@@ -97,12 +130,18 @@ async function loadArchive() {
     errorMessage.style.display = 'none';
     
     try {
-        const response = await fetch(`${API_BASE}/api/articles`);
-        if (!response.ok) {
-            throw new Error('无法加载文章');
+        // 检查缓存
+        let articles = cache.get('archive', cache.articles);
+        if (!articles) {
+            const response = await fetch(`${API_BASE}/api/articles`);
+            if (!response.ok) {
+                throw new Error('无法加载文章');
+            }
+            
+            articles = await response.json();
+            // 存储到缓存
+            cache.set('archive', articles, cache.articles);
         }
-        
-        const articles = await response.json();
         
         // 按年份和月份分组
         const groupedArticles = {};
@@ -150,10 +189,27 @@ async function loadArchive() {
                     const day = articleDate.getDate();
                     
                     // 获取作者信息
-                    const author = article.author || {
-                        username: '未知用户',
-                        is_admin: false
-                    };
+                    let author = cache.get(article.author_uid, cache.users);
+                    if (!author) {
+                        try {
+                            const authorResponse = await fetch(`${API_BASE}/api/users/${article.author_uid}`);
+                            if (authorResponse.ok) {
+                                author = await authorResponse.json();
+                                // 存储到缓存
+                                cache.set(article.author_uid, author, cache.users);
+                            }
+                        } catch (authorError) {
+                            console.error('获取作者信息失败:', authorError);
+                        }
+                    }
+                    
+                    // 设置默认作者信息
+                    if (!author) {
+                        author = {
+                            username: '未知用户',
+                            is_admin: false
+                        };
+                    }
                     
                     archiveHTML += `<li class="article-item">`;
                     archiveHTML += `<a href="article.html?id=${article.id}" class="article-link">${article.title}</a>`;

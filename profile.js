@@ -36,6 +36,39 @@
         let currentUser = null;
         let profileUser = null;
         
+        // 创建缓存对象
+        const cache = {
+            users: new Map(),
+            articles: new Map(),
+            // 缓存有效期5分钟
+            ttl: 5 * 60 * 1000,
+            
+            set(key, data, map) {
+                map.set(key, {
+                    data: data,
+                    timestamp: Date.now()
+                });
+            },
+            
+            get(key, map) {
+                const cached = map.get(key);
+                if (!cached) return null;
+                
+                // 检查是否过期
+                if (Date.now() - cached.timestamp > this.ttl) {
+                    map.delete(key);
+                    return null;
+                }
+                
+                return cached.data;
+            },
+            
+            clear() {
+                this.users.clear();
+                this.articles.clear();
+            }
+        };
+        
         // 检查主题模式
         function checkTheme() {
             const savedTheme = localStorage.getItem('blog-theme');
@@ -124,110 +157,83 @@
             errorMessage.style.display = 'none';
             
             try {
-                // 从URL获取用户ID
                 const urlParams = new URLSearchParams(window.location.search);
-                const uid = urlParams.get('uid') || '1'; // 默认加载第一个用户
+                const userId = urlParams.get('id');
                 
-                // 获取用户信息
-                const userResponse = await fetch(`${API_BASE}/api/users/${uid}`);
-                if (!userResponse.ok) {
-                    throw new Error('用户不存在或加载失败');
-                }
+                let userData, articlesData;
                 
-                profileUser = await userResponse.json();
-                
-                // 加载用户文章
-                const articlesResponse = await fetch(`${API_BASE}/api/articles`);
-                const allArticles = articlesResponse.ok ? await articlesResponse.json() : [];
-                const userArticlesList = allArticles.filter(article => article.author_uid === uid);
-                
-                // 更新页面内容
-                sidebarAvatar.src = profileUser.avatar;
-                sidebarUsername.textContent = profileUser.username;
-                articleCount.textContent = userArticlesList.length;
-                followerCount.textContent = '0'; // 暂时没有粉丝功能
-                
-                if (profileUser.is_admin) {
-                    sidebarAdminBadge.style.display = 'inline';
-                } else {
-                    sidebarAdminBadge.style.display = 'none';
-                }
-                
-                // 设置注册时间
-                registeredAt.textContent = new Date(profileUser.created_at).toLocaleDateString('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                userId.textContent = profileUser.uid;
-                
-                // 更新个人简介
-                if (profileUser.bio) {
-                    bioContent.innerHTML = marked.parse(profileUser.bio);
-                } else {
-                    bioContent.innerHTML = '<p>该用户还没有设置个人简介。</p>';
-                }
-                
-                // 添加操作按钮（如果当前用户有权限）
-                profileActions.innerHTML = '';
-                
-                if (currentUser && (currentUser.uid === profileUser.uid || currentUser.is_admin)) {
-                    const editBioBtn = document.createElement('button');
-                    editBioBtn.className = 'btn btn-secondary';
-                    editBioBtn.innerHTML = '<i class="fas fa-edit"></i> 编辑简介';
-                    editBioBtn.addEventListener('click', showBioEditor);
+                if (userId) {
+                    // 查看其他用户资料
+                    // 检查缓存
+                    userData = cache.get(`user_${userId}`, cache.users);
+                    if (!userData) {
+                        const userResponse = await fetch(`${API_BASE}/api/users/${userId}`);
+                        if (!userResponse.ok) {
+                            throw new Error('用户不存在');
+                        }
+                        userData = await userResponse.json();
+                        // 存储到缓存
+                        cache.set(`user_${userId}`, userData, cache.users);
+                    }
                     
-                    profileActions.appendChild(editBioBtn);
-                }
-                
-                // 显示用户文章
-                userArticles.innerHTML = '';
-                
-                if (userArticlesList.length === 0) {
-                    userArticles.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--secondary);">
-                            <p>该用户还没有发布任何文章。</p>
-                        </div>
-                    `;
-                } else {
-                    // 只显示最新的5篇文章
-                    const latestArticles = userArticlesList.slice(0, 5);
+                    profileUser = userData;
                     
-                    for (const article of latestArticles) {
-                        const articleCard = document.createElement('div');
-                        articleCard.className = 'user-article-card';
-                        
-                        articleCard.innerHTML = `
-                            <div class="user-article-header">
-                                <h3 class="user-article-title"><a href="article.html?id=${article.id}" style="color: inherit; text-decoration: none;">${article.title}</a></h3>
-                                <p class="user-article-subtitle">${article.subtitle || ''}</p>
-                                <div class="user-article-meta">
-                                    <div class="user-article-date">
-                                        <i class="far fa-calendar-alt"></i>
-                                        ${new Date(article.created_at).toLocaleDateString('zh-CN', { 
-                                            year: 'numeric', 
-                                            month: 'numeric', 
-                                            day: 'numeric' 
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-article-actions">
-                                <a href="article.html?id=${article.id}" class="btn btn-secondary" style="width: 100%;">
-                                    <i class="fas fa-eye"></i> 查看文章
-                                </a>
-                            </div>
-                        `;
-                        
-                        userArticles.appendChild(articleCard);
+                    // 获取用户文章
+                    articlesData = cache.get(`user_articles_${userId}`, cache.articles);
+                    if (!articlesData) {
+                        const articlesResponse = await fetch(`${API_BASE}/api/articles?author=${userId}`);
+                        if (articlesResponse.ok) {
+                            articlesData = await articlesResponse.json();
+                            // 存储到缓存
+                            cache.set(`user_articles_${userId}`, articlesData, cache.articles);
+                        }
+                    }
+                } else {
+                    // 查看自己的资料
+                    if (!currentUser) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    userData = currentUser;
+                    profileUser = userData;
+                    
+                    // 获取用户文章
+                    articlesData = cache.get(`user_articles_${currentUser.uid}`, cache.articles);
+                    if (!articlesData) {
+                        const articlesResponse = await fetch(`${API_BASE}/api/articles?author=${currentUser.uid}`);
+                        if (articlesResponse.ok) {
+                            articlesData = await articlesResponse.json();
+                            // 存储到缓存
+                            cache.set(`user_articles_${currentUser.uid}`, articlesData, cache.articles);
+                        }
                     }
                 }
                 
-                // 初始化代码高亮
-                if (typeof hljs !== 'undefined') {
-                    document.querySelectorAll('#bioContent pre code').forEach((block) => {
-                        hljs.highlightElement(block);
-                    });
+                // 填充侧边栏信息
+                sidebarAvatar.src = userData.avatar;
+                sidebarUsername.textContent = userData.username;
+                sidebarAdminBadge.style.display = userData.is_admin ? 'inline' : 'none';
+                articleCount.textContent = articlesData ? articlesData.length : 0;
+                followerCount.textContent = '0'; // 暂时设置为0，后续可扩展关注功能
+                bioContent.innerHTML = userData.bio ? marked.parse(userData.bio) : '<p>这个用户很懒，还没有填写个人简介。</p>';
+                registeredAt.textContent = new Date(userData.created_at).toLocaleDateString('zh-CN');
+                userId.textContent = userData.uid;
+                
+                // 填充文章列表
+                if (articlesData && articlesData.length > 0) {
+                    userArticles.innerHTML = articlesData.map(article => `
+                        <div class="article-item">
+                            <h3><a href="article.html?id=${article.id}">${article.title}</a></h3>
+                            <p class="article-meta">
+                                <span><i class="far fa-calendar-alt"></i> ${new Date(article.created_at).toLocaleDateString('zh-CN')}</span>
+                                ${article.subtitle ? `<span><i class="fas fa-tag"></i> ${article.subtitle}</span>` : ''}
+                            </p>
+                            <p class="article-excerpt">${article.content.substring(0, 100)}${article.content.length > 100 ? '...' : ''}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    userArticles.innerHTML = '<p class="no-articles">该用户还没有发布任何文章。</p>';
                 }
                 
                 // 显示内容
@@ -235,6 +241,20 @@
                 mainLoading.style.display = 'none';
                 profileSidebarContent.style.display = 'block';
                 profileMainContent.style.display = 'block';
+                
+                // 如果是查看自己的资料，显示编辑按钮
+                if (!userId && currentUser) {
+                    profileActions.style.display = 'flex';
+                } else {
+                    profileActions.style.display = 'none';
+                }
+                
+                // 应用代码高亮
+                if (typeof hljs !== 'undefined') {
+                    document.querySelectorAll('#bioContent pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }
             } catch (error) {
                 console.error('加载用户信息失败:', error);
                 errorText.textContent = error.message || '无法加载用户信息，请稍后再试。';

@@ -236,7 +236,8 @@ async function submitArticle() {
             title: title.value.trim(),
             subtitle: subtitle.value.trim(),
             content: content.value,
-            use_markdown: useMarkdown.checked
+            // 强制使用Markdown格式
+            use_markdown: true
         };
         
         const token = localStorage.getItem('blog_token');

@@ -144,10 +144,33 @@ contactForm.addEventListener('submit', async (e) => {
     
     if (!isValid) return;
     
-    // 在实际应用中，这里会发送邮件或保存到数据库
-    // 由于我们没有后端邮件服务，这里只是模拟
-    alert('感谢您的消息！我们会在24小时内回复您。');
-    contactForm.reset();
+    // 发送消息到后端
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name.value.trim(),
+                email: email.value.trim(),
+                subject: subject.value.trim(),
+                message: message.value.trim()
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            alert('感谢您的消息！我们会在24小时内回复您。');
+            contactForm.reset();
+        } else {
+            alert(`发送失败: ${result.error || '未知错误'}`);
+        }
+    } catch (error) {
+        console.error('发送消息失败:', error);
+        alert('发送失败，请稍后再试');
+    }
 });
 
 // 表单输入验证

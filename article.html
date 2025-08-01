@@ -86,6 +86,20 @@
             </div>
         </div>
         
+        <!-- 评论区域 -->
+        <div class="comments-section" id="commentsSection" style="display: none;">
+            <h3>评论</h3>
+            <div class="comments-form">
+                <div class="form-group">
+                    <textarea id="commentContent" placeholder="输入您的评论（支持Markdown语法）"></textarea>
+                </div>
+                <button class="btn btn-primary" id="submitComment">发表评论</button>
+            </div>
+            <div class="comments-list" id="commentsList">
+                <!-- 评论将在这里动态生成 -->
+            </div>
+        </div>
+        
         <div class="error-message" id="errorMessage" style="display: none;">
             <h3>文章加载失败</h3>
             <p id="errorText">无法加载文章，请稍后再试。</p>

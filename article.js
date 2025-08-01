@@ -27,6 +27,41 @@ const themeToggle = document.getElementById('themeToggle');
 let currentUser = null;
 let currentArticle = null;
 
+// 创建缓存对象
+const cache = {
+    articles: new Map(),
+    users: new Map(),
+    comments: new Map(),
+    // 缓存有效期5分钟
+    ttl: 5 * 60 * 1000,
+    
+    set(key, data, map) {
+        map.set(key, {
+            data: data,
+            timestamp: Date.now()
+        });
+    },
+    
+    get(key, map) {
+        const cached = map.get(key);
+        if (!cached) return null;
+        
+        // 检查是否过期
+        if (Date.now() - cached.timestamp > this.ttl) {
+            map.delete(key);
+            return null;
+        }
+        
+        return cached.data;
+    },
+    
+    clear() {
+        this.articles.clear();
+        this.users.clear();
+        this.comments.clear();
+    }
+};
+
 // 检查主题模式
 function checkTheme() {
     const savedTheme = localStorage.getItem('blog-theme');
@@ -120,12 +155,20 @@ async function loadArticle() {
             throw new Error('未提供文章ID');
         }
         
-        const response = await fetch(`${API_BASE}/api/articles/${id}`);
-        if (!response.ok) {
-            throw new Error('文章未找到');
+        // 检查缓存
+        let articleData = cache.get(id, cache.articles);
+        if (!articleData) {
+            const response = await fetch(`${API_BASE}/api/articles/${id}`);
+            if (!response.ok) {
+                throw new Error('文章未找到');
+            }
+            
+            articleData = await response.json();
+            // 存储到缓存
+            cache.set(id, articleData, cache.articles);
         }
         
-        currentArticle = await response.json();
+        currentArticle = articleData;
         
         // 填充文章内容
         articleTitle.textContent = currentArticle.title;
@@ -133,19 +176,27 @@ async function loadArticle() {
         articleSubtitle.style.display = currentArticle.subtitle ? 'block' : 'none';
         
         // 获取作者信息
-        let authorData = {
-            username: '未知用户',
-            avatar: 'https://avatars.githubusercontent.com/u/211512911?v=4',
-            is_admin: false
-        };
-        
-        try {
-            const authorResponse = await fetch(`${API_BASE}/api/users/${currentArticle.author_uid}`);
-            if (authorResponse.ok) {
-                authorData = await authorResponse.json();
+        let authorData = cache.get(currentArticle.author_uid, cache.users);
+        if (!authorData) {
+            try {
+                const authorResponse = await fetch(`${API_BASE}/api/users/${currentArticle.author_uid}`);
+                if (authorResponse.ok) {
+                    authorData = await authorResponse.json();
+                    // 存储到缓存
+                    cache.set(currentArticle.author_uid, authorData, cache.users);
+                }
+            } catch (authorError) {
+                console.error('获取作者信息失败:', authorError);
             }
-        } catch (authorError) {
-            console.error('获取作者信息失败:', authorError);
+        }
+        
+        // 设置默认作者信息
+        if (!authorData) {
+            authorData = {
+                username: '未知用户',
+                avatar: 'https://avatars.githubusercontent.com/u/211512911?v=4',
+                is_admin: false
+            };
         }
         
         // 设置作者信息
@@ -162,12 +213,8 @@ async function loadArticle() {
         });
         articleDate.textContent = formattedDate;
         
-        // 处理内容
-        if (currentArticle.use_markdown) {
-            articleContent.innerHTML = marked.parse(currentArticle.content);
-        } else {
-            articleContent.innerHTML = `<p>${currentArticle.content.replace(/\n/g, '</p><p>')}</p>`;
-        }
+        // 处理内容 - 强制使用Markdown格式
+        articleContent.innerHTML = marked.parse(currentArticle.content);
         
         // 应用代码高亮
         if (typeof hljs !== 'undefined') {
@@ -178,7 +225,8 @@ async function loadArticle() {
         
         // 创建操作按钮
         articleActions.innerHTML = '';
-        if (currentUser && (currentUser.is_admin || currentUser.id === currentArticle.author.id)) {
+        // 修复：使用正确的字段名 author_uid 而不是 author.id
+        if (currentUser && (currentUser.is_admin || currentUser.uid === currentArticle.author_uid)) {
             const editBtn = document.createElement('button');
             editBtn.className = 'btn btn-secondary';
             editBtn.innerHTML = '<i class="fas fa-edit"></i> 编辑';
@@ -197,6 +245,9 @@ async function loadArticle() {
         // 显示文章容器
         loadingIndicator.style.display = 'none';
         articleContainer.style.display = 'block';
+        
+        // 加载评论
+        loadComments();
     } catch (error) {
         console.error('加载文章失败:', error);
         errorText.textContent = error.message || '无法加载文章，请稍后再试。';
@@ -228,6 +279,8 @@ function deleteArticle() {
         return response.json();
     })
     .then(() => {
+        // 清除缓存
+        cache.articles.delete(id);
         alert('文章删除成功！');
         window.location.href = 'index.html';
     })
@@ -235,6 +288,155 @@ function deleteArticle() {
         console.error('删除文章失败:', error);
         alert(`删除失败: ${error.message}`);
     });
+}
+
+// 加载评论
+async function loadComments() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    
+    if (!id) return;
+    
+    try {
+        // 检查缓存
+        let commentsData = cache.get(id, cache.comments);
+        if (!commentsData) {
+            const response = await fetch(`${API_BASE}/api/articles/${id}/comments`);
+            if (!response.ok) {
+                throw new Error('加载评论失败');
+            }
+            
+            commentsData = await response.json();
+            // 存储到缓存
+            cache.set(id, commentsData, cache.comments);
+        }
+        
+        renderComments(commentsData);
+    } catch (error) {
+        console.error('加载评论失败:', error);
+    }
+}
+
+// 渲染评论
+function renderComments(comments) {
+    const commentsSection = document.getElementById('commentsSection');
+    const commentsList = document.getElementById('commentsList');
+    
+    if (comments.length === 0) {
+        commentsList.innerHTML = '<p class="no-comments">暂无评论，快来抢沙发吧！</p>';
+    } else {
+        commentsList.innerHTML = comments.map(comment => `
+            <div class="comment" data-id="${comment.id}">
+                <div class="comment-header">
+                    <img src="${comment.author.avatar}" alt="${comment.author.username}" class="comment-avatar">
+                    <div class="comment-author">${comment.author.username}</div>
+                    <div class="comment-date">${new Date(comment.created_at).toLocaleString()}</div>
+                    ${currentUser && (currentUser.uid === comment.author.uid || currentUser.is_admin) ? 
+                      `<button class="delete-comment-btn" data-id="${comment.id}"><i class="fas fa-trash"></i></button>` : ''}
+                </div>
+                <div class="comment-content">
+                    ${marked.parse(comment.content)}
+                </div>
+            </div>
+        `).join('');
+        
+        // 添加删除按钮事件监听器
+        document.querySelectorAll('.delete-comment-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-id');
+                deleteComment(commentId);
+            });
+        });
+    }
+    
+    // 确保评论区域存在后再显示
+    if (commentsSection) {
+        commentsSection.style.display = 'block';
+    }
+}
+
+// 提交评论
+async function submitComment() {
+    const commentContent = document.getElementById('commentContent');
+    const urlParams = new URLSearchParams(window.location.search);
+    const articleId = urlParams.get('id');
+    
+    if (!commentContent.value.trim()) {
+        alert('评论内容不能为空');
+        return;
+    }
+    
+    if (!currentUser) {
+        alert('请先登录后再发表评论');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('blog_token');
+        const response = await fetch(`${API_BASE}/api/articles/${articleId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                content: commentContent.value.trim()
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '发表评论失败');
+        }
+        
+        // 清除评论缓存
+        cache.comments.delete(articleId);
+        
+        // 清空评论框
+        commentContent.value = '';
+        
+        // 重新加载评论
+        loadComments();
+    } catch (error) {
+        console.error('发表评论失败:', error);
+        alert(`发表评论失败: ${error.message}`);
+    }
+}
+
+// 删除评论
+async function deleteComment(commentId) {
+    if (!confirm('确定要删除这条评论吗？')) {
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('blog_token');
+        const response = await fetch(`${API_BASE}/api/comments/${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '删除评论失败');
+        }
+        
+        // 获取文章ID以清除相关缓存
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+        
+        // 清除评论缓存
+        cache.comments.delete(articleId);
+        
+        // 重新加载评论
+        loadComments();
+    } catch (error) {
+        console.error('删除评论失败:', error);
+        alert(`删除评论失败: ${error.message}`);
+    }
 }
 
 // 事件监听器
@@ -280,6 +482,14 @@ document.addEventListener('click', (e) => {
 // 切换主题
 themeToggle.addEventListener('click', toggleTheme);
 
+// 提交评论按钮 - 修复事件监听器
+document.addEventListener('DOMContentLoaded', () => {
+    const submitCommentBtn = document.getElementById('submitComment');
+    if (submitCommentBtn) {
+        submitCommentBtn.addEventListener('click', submitComment);
+    }
+});
+
 // 重试按钮
 retryBtn.addEventListener('click', loadArticle);
 
@@ -288,4 +498,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkTheme();
     await checkAuth();
     await loadArticle();
+    
+    // 添加个人资料链接事件监听器
+    const profileLink = document.getElementById('profileLink');
+    if (profileLink) {
+        profileLink.addEventListener('click', () => {
+            if (currentUser) {
+                window.location.href = `profile.html?id=${currentUser.uid}`;
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    }
 });

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saabor博客 - 联系消息管理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-contact.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="top-links">
+                    <a href="about.html"><i class="fas fa-info-circle"></i> 关于</a>
+                    <a href="contact.html"><i class="fas fa-envelope"></i> 联系我</a>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">S</span>
+                    saabor博客
+                </a>
+                <div class="nav-links">
+                    <a href="index.html">首页</a>
+                    <a href="categories.html">分类</a>
+                    <a href="archive.html">归档</a>
+                    <a href="admin-contact.html" class="active">消息管理</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" id="loginBtn" style="display: none;">登录</button>
+                    <button class="btn btn-secondary" id="registerBtn" style="display: none;">注册</button>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <img src="" alt="头像" class="user-avatar" id="userAvatar">
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-item" id="profileLink">
+                                <i class="fas fa-user"></i>
+                                个人资料
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                退出登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="admin-contact-container">
+            <div class="admin-contact-header">
+                <h1>联系消息管理</h1>
+                <p>管理用户发送的联系消息</p>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>加载消息中...</p>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer" style="display: none;">
+                <div class="messages-list" id="messagesList">
+                    <!-- 消息列表将在这里动态生成 -->
+                </div>
+            </div>
+            
+            <div class="message-detail" id="messageDetail" style="display: none;">
+                <div class="message-header">
+                    <button class="btn btn-secondary" id="backToList">
+                        <i class="fas fa-arrow-left"></i> 返回列表
+                    </button>
+                    <div class="message-status" id="messageStatus"></div>
+                    <button class="btn btn-primary" id="markAsRead" style="display: none;">
+                        标记为已读
+                    </button>
+                    <button class="btn btn-success" id="markAsReplied" style="display: none;">
+                        标记为已回复
+                    </button>
+                </div>
+                <div class="message-content" id="messageContent">
+                    <!-- 消息详情将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 saabor博客. 保留所有权利.</p>
+        </div>
+    </footer>
+    
+    <script src="admin-contact.js"></script>
+</body>
+</html>
